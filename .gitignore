@@ -3,3 +3,6 @@
 
 # ignore executable
 *.exe
+
+# this contains a config file for me to run local llms, not needed for the project
+.continue/
