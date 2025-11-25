@@ -25,6 +25,7 @@ int main(void){
 
         switch (choice) {
             case 1: {
+                // Add bill
                 sBill *bill = create_bill_from_input();
                 if(bill){
                     add_bill(&list, bill);
@@ -65,7 +66,7 @@ int main(void){
                 }
                 break;
             }
-            case 5: {
+            /*case 5: {
                 // Sort
                 printf("Sort by: \n1) Amount\n2) Date\n");
                 int sub = read_int_in_range(1, 2);
@@ -94,7 +95,7 @@ int main(void){
             // Export CSV
             export_csv(&list);
             break;
-
+*/
             case 0:
             running = 0;
             break;
@@ -104,12 +105,12 @@ int main(void){
                 break;
         }
     }
-    //Ask to save before quitting
+ /*   //Ask to save before quitting
     printf("Save bills to binary file before quitting? (1 = Yes, 0 = No)\n");
     int saveBeforeExit = read_int_in_range(0,1);
     if (saveBeforeExit){
         save_bin(&list);
-    }
+    } */
 
     clear_list(&list);
     printf("Goodbye!\n");
