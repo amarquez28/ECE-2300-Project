@@ -42,7 +42,7 @@ float read_float_positive(void){
     if (!fgets(line, sizeof(line), stdin)){
       continue;
     }
-    if (sscan(line, "%f", &value) == 1 && value >= 0.0f){
+    if (sscanf(line, "%f", &value) == 1 && value >= 0.0f){
       return value;
     }
     printf("Invalid amount. Please enter a positive number.\n");
@@ -90,7 +90,7 @@ static void swap_bill_data(sBill *a, sBill *b){
 }
 
 /* Creating a new bill for the user*/
-static sBill *create_bill_from_input(void){
+sBill *create_bill_from_input(void){
   sBill *bill = (sBill *)malloc(sizeof(sBill));
   if(!bill){
     printf("Memory allocation failed.\n");
@@ -168,7 +168,7 @@ void delete_bill(sBill_LL *list, int index){
     printf("Invalid index.\n");
     return;
   }
-  printf("Are you sure you wan tto delete bill #%d? (1 = Yes, 0 = No)\n", index);
+  printf("Are you sure you wan to delete bill #%d? (1 = Yes, 0 = No)\n", index);
   int confirm = read_int_in_range(0, 1);
   if (!confirm){
     printf("Delete canceled.\n");
@@ -290,30 +290,30 @@ void clear_list(sBill_LL *list){
   list->size = 0;
 }
 
-void view_bills(const sBill_LL *list){
-  if(!list || list->size == 0){
-    printf("No bills recorded.\n");
-    return;
-  }
+void view_bills(const sBill_LL *list) {
+    if (!list || list->size == 0) {
+        printf("No bills recorded.\n");
+        return;
+    }
 
-  printf("\n---- Bills (%d total) ----\n", list->size);
-  int index = 1;
-  sBill *curr = list->head;
-  while (curr){
-    printf("#%d) [%s] %s | $%.2f | %s | %s | Tax:%s\n",
-          index,
-          curr->category,
-          curr->provider,
-          curr->total,
-          curr->date,
-          curr->billingPeriod,
-          curr->taxRelevance ? "Yes" : "No");
-    printf("  Payment: type=%d, method=%s\n", curr->payment, curr->paymentMethod);
-    printf("  Notes: %s\n", curr->notes);
-    curr = curr->next;
-    index++;
-  }
-  printf("-------------------------------\n");
+    printf("\n---- Bills (%d total) ----\n", list->size);
+    int index = 1;
+    sBill *curr = list->head;
+    while (curr) {
+        printf("#%d) [%s] %s | $%.2f | %s | %s | Tax:%s\n",
+               index,
+               curr->category,
+               curr->provider,
+               curr->total,
+               curr->date,
+               curr->billingPeriod,
+               curr->taxRelevance ? "Yes" : "No");
+        printf("    Payment: type=%d, method=%s\n", curr->payment, curr->paymentMethod);
+        printf("    Notes: %s\n", curr->notes);
+        curr = curr->next;
+        index++;
+    }
+    printf("--------------------------\n");
 }
 
 void filter_bills(sBill_LL *list, int criteria) {
@@ -342,10 +342,10 @@ void sort_bills(sBill_LL *list, int field) {
   }
 }
 
-/* Menu UI*/
 
-void print_menu(const sBill_LL *list) {
-    printf("\n-$$----Bill Organizer----$$-\n");
+/*Menu UI*/
+void print_menu(const sBill_LL *list){
+  printf("\n-$$----Bill Organizer----$$-\n");
     printf("|                          |\n");
     printf("| 1) Add bill              |\n");
     printf("| 2) Edit bill             |\n");
@@ -358,6 +358,6 @@ void print_menu(const sBill_LL *list) {
     printf("| 9) Export CSV            |\n");
     printf("| 0) Quit                  |\n");
     printf("|                          |\n");
-    printf("-----------------------------------\n");
+    printf("---------------------------\n");
     printf("Choice: ");
 }

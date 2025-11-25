@@ -26,8 +26,8 @@ typedef struct sBill {
   char billingPeriod[MAX_NAME_LEN];
   int taxRelevance;
   char notes[MAX_NOTE_LEN];
-  sBill *next;
-  sBill *prev;
+  struct sBill *next;
+  struct sBill *prev;
 
 } sBill;
 
@@ -38,6 +38,7 @@ typedef struct {
 
 } sBill_LL;
 
+sBill *create_bill_from_input(void);
 void init_list(sBill_LL *list);
 void add_bill(sBill_LL *list, sBill *newBill);
 void edit_bill(sBill_LL *list, int index);
