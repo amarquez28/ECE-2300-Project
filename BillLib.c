@@ -136,6 +136,161 @@ static sBill *create_bill_from_input(void){
   return bill;
 }
 
+/* Core Functions*/
+void init_list(sBill_LL *list){
+  if (!list) return;
+  list->head = list->tail = NULL;
+  list->size = 0;
+}
+
+void add_bill(sBill_LL *list, sBill *newBill){
+  if(!list || !newBill) return;
+  newBill->next = NULL;
+  newBill->prev = list->tail;
+
+  if(list->tail){
+    list->tail->next = newBill;
+  }
+  else{
+    list->head = newBill;
+  }
+  list->tail = newBill;
+  list->size++;
+}
+
+void delete_bill(sBill_LL *list, int index){
+  if(!list || list->size == 0){
+    printf("No bills to delete.\n");
+    return;
+  }
+  sBill *target = get_bill_at(list, index);
+  if (!target){
+    printf("Invalid index.\n");
+    return;
+  }
+  printf("Are you sure you wan tto delete bill #%d? (1 = Yes, 0 = No)\n", index);
+  int confirm = read_int_in_range(0, 1);
+  if (!confirm){
+    printf("Delete canceled.\n");
+    return;
+  }
+  if(target->prev)
+    target->prev->next = target->next;
+  else
+    list->head = target->next;
+
+  if(target->next)
+    target->next->prev = target->prev;
+  else
+    list->tail = target->prev;
+
+  free(target);
+  list->size--;
+
+  printf("Bill deleted.\n");
+}
+
+void edit_bill(sBill_LL *list, int index){
+  if (!list || list->size == 0){
+    printf("No bills to edit.\n");
+    return;
+  }
+  sBill *bill = get_bill_at(list, index);
+  if (!bill){
+    printf("Invalid index.\n");
+    return;
+  }
+  printf("Editing bill #%d:\n", index);
+  printf("Leave field empty to keep current value.\n\n");
+
+  char buffer[128];
+
+  printf("Category (current: %s):\n", bill->category);
+  read_line(buffer, sizeof(buffer));
+  if(strlen(buffer) > 0){
+    strncpy(bill->category, buffer, MAX_NAME_LEN - 1);
+    bill->category[MAX_NAME_LEN - 1] = '\0';
+  }
+
+  printf("Privider (current: %s):\n", bill->provider);
+  read_line(buffer, sizeof(buffer));
+  if (strlen(buffer) > 0) {
+    strncpy(bill->provider, buffer, MAX_NAME_LEN - 1);
+    bill->provider[MAX_NAME_LEN - 1] = '\0';
+  }
+
+  printf("Total (current: %.2f) (leave emtpy to keep):\n", bill->total);
+  read_line(buffer, sizeof(buffer));
+  if(strlen(buffer) > 0){
+    float t;
+    if (sscanf(buffer, "%f", &t) == 1 && t >= 0.0f){
+      bill->total = t;
+    }
+  }
+
+  printf("Payment type (current: %d) or empty to keep:\n", bill->payment);
+  printf("0) CREDIT\n1) DEBIT\n2) MONEY ORDER\n3) CASH\n4) CHECK\n5) PAYMENT PLANS\n");
+  read_line(buffer, sizeof(buffer));
+  if(strlen(buffer) > 0){
+    int pt;
+    if(sscanf(buffer, "%d", &pt) == 1 && pt >= 0 && pt <= 5){
+      bill->payment = (enum paymentType)pt;
+    }
+  }
+
+  printf("Payment method (current: %s) or empty to keep:\n", bill->paymentMethod);
+  read_line(buffer, sizeof(buffer));
+  if (strlen(buffer) > 0){
+    strncpy(bill->paymentMethod, buffer, sizeof(bill->paymentMethod) - 1);
+    bill->paymentMethod[sizeof(bill->paymentMethod) - 1] = '\0';
+  }
+
+  printf("Date (current: %s) or empty to keep:\n", bill->date);
+  read_line(buffer, sizeof(buffer));
+  if (strlen(buffer) > 0) {
+    strncpy(bill->date, buffer, DATE_LEN - 1);
+    bill->date[DATE_LEN - 1] = '\0';
+  }
+
+  printf("Billing period (current: %s) or empty to keep:\n", bill->billingPeriod);
+  read_line(buffer, sizeof(buffer));
+  if(strlen(buffer) > 0){
+    strncpy(bill->billingPeriod, buffer, MAX_NAME_LEN - 1);
+    bill->billingPeriod[MAX_NAME_LEN - 1] = '\0';
+  }
+
+  printf("Tax relevant (current: %d) or empty to keep:\n", bill->taxRelevance);
+  read_line(buffer, sizeof(buffer));
+  if (strlen(buffer) > 0){
+    int tx;
+    if (sscanf(buffer, "%d", &tx) == 1 && (tx == 0 || tx == 1)){
+      bill->taxRelevance = tx;
+    }
+  }
+
+  printf("Notes (current: %s) or empty to keep: \n", bill->notes);
+  read_line(buffer, sizeof(buffer));
+  if (strlen(buffer) > 0){
+    strncpy(bill->notes, buffer, MAX_NOTE_LEN - 1);
+    bill->notes[MAX_NAME_LEN - 1] = '\0';
+  }
+
+  printf("Bill updated.\n");
+}
+
+void clear_list(sBill_LL *list){
+  if(!list) return;
+  sBill *curr = list->head;
+  while (curr){
+    sBill *next = curr->next;
+    free(curr);
+    curr = next;
+  }
+  list->head = list->tail = NULL;
+  list->size = 0;
+}
+
+
 void filter_bills(sBill_LL *list, int criteria) {
   switch (criteria) {
   case BY_AMOUNT:
