@@ -318,28 +318,91 @@ void view_bills(const sBill_LL *list) {
 
 void filter_bills(sBill_LL *list, int criteria) {
   switch (criteria) {
-  case BY_AMOUNT:
-    /* code */
+  case BY_AMOUNT: {
+    float min, max;
+    char line[64];
+
+    printf("Min total amount:\n");
+    min = read_float_positive();
+
+    printf("Max total amount (0 for no max):\n");
+    fgets(line, sizeof(line), stdin);
+    if (sscanf(line, "%f", &max) != 1 || max <= 0){
+      max = 1e9f;
+    }
+
+    printf("\nFiltered by amount [%.2f - %.2f]:\n", min, max);
+    int count = 0;
+    sBill *curr = list->head;
+    while (curr){
+      if(curr->total >= min && curr->total <= max){
+        count++;
+        printf("#%d) [%s] %s | $%.2f | %s\n", count, curr->category, curr->provider, curr->total, curr->date);
+      }
+      curr = curr->next;
+    }
+    printf("Matched %d record(s).\n", count);
+  }
     break;
-  case BY_DATE:
-    /* code */
+  case BY_DATE: {
+    char start[DATE_LEN], end[DATE_LEN];
+    printf("Start date (YYYY-MM-DD):\n");
+    read_line(start, DATE_LEN);
+    printf("End date (YYYY-MM-DD):\n");
+    read_line(end, DATE_LEN);
+
+    printf("\nFiltered by date [%s - %s]:\n", start, end);
+    int count = 0;
+    sBill *curr = list->head;
+    while (curr){
+      if (compare_dates(curr->date, start) >= 0 &&
+          compare_dates(curr->date, end) <= 0){
+            count++;
+            printf("#%d) [%s] %s | $%.2f | %s\n", count, curr->category, curr->provider, curr->total, curr->date);
+          }
+          curr = curr->next;
+    }
+    printf("Matched %d record(s).\n", count);
     break;
+  }
   default:
+    printf("Unknown filter criteria.\n");
     break;
   }
 }
 
 void sort_bills(sBill_LL *list, int field) {
-  switch (field) {
-  case AMOUNT:
-    /* code */
-    break;
-  case DATE:
-    /* code */
-    break;
-  default:
-    break;
+  if (!list || list->size < 2){
+    printf("Not enough bills to sort.\n");
+    return;
   }
+
+  int swapped;
+  do{
+    swapped = 0;
+    sBill *curr = list->head;
+    while (curr && curr->next){
+      int cmp = 0;
+      switch (field){
+        case AMOUNT:
+          if(curr->total > curr->next->total)
+            cmp = 1;
+          break;
+        case DATE:
+          if(compare_dates(curr->date, curr->next->date) > 0)
+            cmp = 1;
+          break;
+        default:
+          break;
+      }
+      if (cmp){
+        swap_bill_data(curr, curr->next);
+        swapped = 1;
+      }
+      curr = curr->next;
+    }
+  } while(swapped);
+  printf("Bills sorted.\n");
 }
 /*
 void generate_report(const sBill_LL *list){
