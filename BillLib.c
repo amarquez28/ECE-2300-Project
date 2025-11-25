@@ -341,7 +341,7 @@ void sort_bills(sBill_LL *list, int field) {
     break;
   }
 }
-
+/*
 void generate_report(const sBill_LL *list){
   //code
 }
@@ -365,7 +365,7 @@ void save_bin(const sBill_LL *list){
 void load_bin(sBill_LL *list){
   //code
 }
-
+*/
 
 /*Menu UI*/
 void print_menu(const sBill_LL *list){
