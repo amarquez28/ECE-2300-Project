@@ -342,6 +342,30 @@ void sort_bills(sBill_LL *list, int field) {
   }
 }
 
+void generate_report(const sBill_LL *list){
+  //code
+}
+
+void save_bill(const sBill_LL *list){
+  //code
+}
+
+void load_bill(sBill_LL *list){
+  //code
+}
+
+void export_csv(const sBill_LL *list){
+  //code
+}
+
+void save_bin(const sBill_LL *list){
+  //code
+}
+
+void load_bin(sBill_LL *list){
+  //code
+}
+
 
 /*Menu UI*/
 void print_menu(const sBill_LL *list){

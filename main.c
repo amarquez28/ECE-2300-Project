@@ -75,27 +75,27 @@ int main(void){
                 else
                     sort_bills(&list, DATE);
                 break;
-            }
-            case 6:
+            }*/
+            /*case 6:
             // Reports & summaries
             generate_report(&list);
-            break;
+            break;*/
 
-            case 7:
+            /*case 7:
             // Save (binary)
             save_bin(&list);
-            break;
+            break;*/
 
-            case 8:
+            /*case 8:
             // Load (binary)
             load_bin(&list);
-            break;
+            break;*/
 
-            case 9:
+            /*case 9:
             // Export CSV
             export_csv(&list);
-            break;
-*/
+            break;*/
+
             case 0:
             running = 0;
             break;
