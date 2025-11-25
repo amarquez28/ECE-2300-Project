@@ -42,6 +42,7 @@ void init_list(sBill_LL *list);
 void add_bill(sBill_LL *list, sBill *newBill);
 void edit_bill(sBill_LL *list, int index);
 void delete_bill(sBill_LL *list, int index);
+void clear_list(sBill_LL *list);
 void view_bills(const sBill_LL *list);
 void filter_bills(sBill_LL *list, int criteria);
 void sort_bills(sBill_LL *list, int field);
