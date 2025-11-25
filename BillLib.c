@@ -290,6 +290,31 @@ void clear_list(sBill_LL *list){
   list->size = 0;
 }
 
+void view_bills(const sBill_LL *list){
+  if(!list || list->size == 0){
+    printf("No bills recorded.\n");
+    return;
+  }
+
+  printf("\n---- Bills (%d total) ----\n", list->size);
+  int index = 1;
+  sBill *curr = list->head;
+  while (curr){
+    printf("#%d) [%s] %s | $%.2f | %s | %s | Tax:%s\n",
+          index,
+          curr->category,
+          curr->provider,
+          curr->total,
+          curr->date,
+          curr->billingPeriod,
+          curr->taxRelevance ? "Yes" : "No");
+    printf("  Payment: type=%d, method=%s\n", curr->payment, curr->paymentMethod);
+    printf("  Notes: %s\n", curr->notes);
+    curr = curr->next;
+    index++;
+  }
+  printf("-------------------------------\n");
+}
 
 void filter_bills(sBill_LL *list, int criteria) {
   switch (criteria) {
@@ -315,4 +340,24 @@ void sort_bills(sBill_LL *list, int field) {
   default:
     break;
   }
+}
+
+/* Menu UI*/
+
+void print_menu(const sBill_LL *list) {
+    printf("\n-$$----Bill Organizer----$$-\n");
+    printf("|                          |\n");
+    printf("| 1) Add bill              |\n");
+    printf("| 2) Edit bill             |\n");
+    printf("| 3) Delete bill           |\n");
+    printf("| 4) View & filter bill    |\n");
+    printf("| 5) Sort bill             |\n");
+    printf("| 6) Reports & summaries   |\n");
+    printf("| 7) Save (binary)         |\n");
+    printf("| 8) Load (binary)         |\n");
+    printf("| 9) Export CSV            |\n");
+    printf("| 0) Quit                  |\n");
+    printf("|                          |\n");
+    printf("-----------------------------------\n");
+    printf("Choice: ");
 }
