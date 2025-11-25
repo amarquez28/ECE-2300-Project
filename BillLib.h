@@ -42,6 +42,7 @@ void init_list(sBill_LL *list);
 void add_bill(sBill_LL *list, sBill *newBill);
 void edit_bill(sBill_LL *list, int index);
 void delete_bill(sBill_LL *list, int index);
+void view_bills(const sBill_LL *list);
 void filter_bills(sBill_LL *list, int criteria);
 void sort_bills(sBill_LL *list, int field);
 void generate_report(const sBill_LL *list);
@@ -51,5 +52,8 @@ void export_csv(const sBill_LL *list);
 void save_bin(const sBill_LL *list);
 void load_bin(const sBill_LL *list);
 void print_menu(const sBill_LL *list);
+void read_line(char *buffer, int size);
+int read_int_in_range(int min, int max);
+float read_float_positive(void);
 
 #endif // BILLLIB_H
