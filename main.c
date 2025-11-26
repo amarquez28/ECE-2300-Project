@@ -66,7 +66,7 @@ int main(void){
                 }
                 break;
             }
-            /*case 5: {
+            case 5: {
                 // Sort
                 printf("Sort by: \n1) Amount\n2) Date\n");
                 int sub = read_int_in_range(1, 2);
@@ -75,11 +75,11 @@ int main(void){
                 else
                     sort_bills(&list, DATE);
                 break;
-            }*/
-            /*case 6:
+            }
+            case 6:
             // Reports & summaries
             generate_report(&list);
-            break;*/
+            break;
 
             /*case 7:
             // Save (binary)
