@@ -404,11 +404,99 @@ void sort_bills(sBill_LL *list, int field) {
   } while(swapped);
   printf("Bills sorted.\n");
 }
-/*
-void generate_report(const sBill_LL *list){
-  //code
-}
 
+void generate_report(const sBill_LL *list){
+  if (!list || list->size == 0){
+    printf("No bills to report.\n");
+    return;
+  }
+  printf("\n--- Report: By Month (YYYY-MM) ---\n");
+
+  // naive fixed-size arrays for demo
+  #define MAX_GROUPS 100
+  char months[MAX_GROUPS][8];
+  int monthCount = 0;
+  int monthRecords[MAX_GROUPS] = {0};
+  float monthTotals[MAX_GROUPS] = {0.0f};
+
+  sBill *curr = list->head;
+  while (curr){
+    char key[8] = {0};
+    strncpy(key, curr->date, 7);
+
+    int idx  = -1;
+    for (int i = 0; i < monthCount; i++){
+      if (strcmp(months[i], key) == 0){
+        idx = i;
+        break;
+      }
+    }
+    if (idx == -1 && monthCount < MAX_GROUPS){
+      idx = monthCount++;
+      strncpy(months[idx], key, 7);
+      months[idx][7] = '\0';
+    }
+    if (idx != -1){
+      monthRecords[idx]++;
+      monthTotals[idx] += curr->total;
+    }
+    curr = curr->next;
+  }
+
+  printf("Month      Count   Total      Average\n");
+  printf("--------------------------------------\n");
+  for (int i = 0; i < monthCount; i++){
+    float avg = monthRecords[i] ? (monthTotals[i]/monthRecords[i]) : 0.0f;
+    printf("%-10s %-7d $%-9.2f $%.2f\n", months[i], monthRecords[i], monthTotals[i], avg);
+  }
+
+  //By Categroy
+  printf("\n--- Report: By Categroy ---\n");
+  char cats[MAX_GROUPS][MAX_NAME_LEN];
+  int catCount = 0;
+  int catRecords[MAX_GROUPS] = {0};
+  float catTotals[MAX_GROUPS] = {0.0f};
+  float catMin[MAX_GROUPS];
+  float catMax[MAX_GROUPS];
+
+  for (int i = 0; i < MAX_GROUPS; i++){
+    catMin[i] = 1e9f;
+    catMax[i] = 0.0f;
+  }
+  curr = list->head;
+  while (curr){
+    int idx = -1;
+    for (int i = 0; i < catCount; i++){
+      if (strcmp(cats[i], curr->category) == 0){
+        idx = i;
+        break;
+      }
+    }
+    if (idx == -1 && catCount < MAX_GROUPS){
+      idx = catCount++;
+      strncpy(cats[idx], curr->category, MAX_NAME_LEN - 1);
+      cats[idx][MAX_NAME_LEN - 1] = '\0';
+    }
+
+    catRecords[idx]++;
+    catTotals[idx] += curr->total;
+    if (curr->total < catMin[idx]) catMin[idx] = curr->total;
+    if (curr->total > catMax[idx]) catMax[idx] = curr->total;
+
+    curr = curr->next;
+  }
+  printf("Category            Count   Total      Min       Max       Avg\n");
+  printf("-----------------------------------------------------------------\n");
+  for (int i = 0; i < catCount; i++) {
+    float avg = catRecords[i] ? (catTotals[i] / catRecords[i]) : 0.0f;
+      printf("%-20s %-7d $%-9.2f $%-8.2f $%-8.2f $%.2f\n",
+            cats[i], catRecords[i], catTotals[i],
+            (catMin[i] == 1e9f ? 0.0f : catMin[i]),
+            catMax[i],
+            avg);
+  }
+}
+/*
 void save_bill(const sBill_LL *list){
   //code
 }
