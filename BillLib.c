@@ -496,19 +496,129 @@ void generate_report(const sBill_LL *list){
             avg);
   }
 }
-/*
+
 void save_bill(const sBill_LL *list){
-  //code
+  if (!list) return;
+
+  FILE *fp = fopen("bills.txt", "w");
+  if(!fp){
+    printf("Could not open bills.txt for writing.\n");
+    return;
+  }
+  
+  sBill *curr = list->head;
+  while (curr){
+    fpritnf(fp, "%s|%s|%.2f|%d|%s|%s|%s|%d|%s\n",
+                curr->category,
+                curr->provider,
+                curr->total,
+                curr->payment,
+                curr->paymentMethod,
+                curr->date,
+                curr->billingPeriod,
+                curr->taxRelevance,
+                curr->notes);
+        curr = curr->next;
+  }
+
+  fclose(fp);
+  printf("Bills saved to bills.txt\n");
 }
 
 void load_bill(sBill_LL *list){
-  //code
+  if (!list) return;
+
+  FILE *fp = fopen("bills.txt", "r");
+  if(!fp){
+    prtinf("No bills.txt file found.\n");
+    return;
+  }
+
+  clear_list(list);
+
+  char line[256];
+  while (fgets(line, sizeof(line), fp)){
+    sBill *bill = (sBill *)malloc(sizeof(sBill));
+    if(!bill) break;
+    memset(bill, 0, sizeof(sBill));
+
+    char *token = strtok(line, "|");
+    if (!token) { free(bill); continue; }
+    strncpy(bill->category, token, MAX_NAME_LEN - 1);
+
+    token = strtok(NULL, "|");
+    if (!token) { free(bill); continue; }
+    strncpy(bill->provider, token, MAX_NAME_LEN - 1);
+
+    token = strtok(NULL, "|");
+    if (!token) { free(bill); continue; }
+    bill->total = (float)atof(token);
+
+    token = strtok(NULL, "|");
+    if (!token) { free(bill); continue; }
+    bill->payment = (enum paymentType)atoi(token);
+
+    token = strtok(NULL, "|");
+    if (!token) { free(bill); continue; }
+    strncpy(bill->paymentMethod, token, sizeof(bill->paymentMethod) - 1);
+
+    token = strtok(NULL, "|");
+    if (!token) { free(bill); continue; }
+    strncpy(bill->date, token, DATE_LEN - 1);
+
+    token = strtok(NULL, "|");
+    if (!token) { free(bill); continue; }
+    strncpy(bill->billingPeriod, token, MAX_NAME_LEN - 1);
+
+    token = strtok(NULL, "|");
+    if (!token) { free(bill); continue; }
+    bill->taxRelevance = atoi(token);
+
+    token = strtok(NULL, "\n");
+    if (!token) token = "";
+    strncpy(bill->notes, token, MAX_NOTE_LEN - 1);
+
+    bill->next = bill->prev = NULL;
+    add_bill(list, bill);
+  }
+
+  fclose(fp);
+  printf("Bills loaded from bills.txt\n");
+
 }
 
 void export_csv(const sBill_LL *list){
-  //code
-}
+  if (!list) return;
 
+  FILE *fp = fopen("bills.csv", "w");
+  if (!fp){
+    printf("Could not open bills.csv for writing.\n");
+    return;
+  }
+
+  fprintf(fp,
+            "Category,Provider,Total,PaymentType,PaymentMethod,Date,BillingPeriod,TaxRelevance,Notes\n");
+
+  sBill *curr = list->head;
+  while (curr){
+    fprintf(fp,
+                "\"%s\",\"%s\",%.2f,%d,\"%s\",\"%s\",\"%s\",%d,\"%s\"\n",
+                curr->category,
+                curr->provider,
+                curr->total,
+                curr->payment,
+                curr->paymentMethod,
+                curr->date,
+                curr->billingPeriod,
+                curr->taxRelevance,
+                curr->notes);
+    curr = curr->next;
+  }
+
+  fclose(fp);
+  printf("Bills exported to bills.csv\n");
+}
+/*
 void save_bin(const sBill_LL *list){
   //code
 }
