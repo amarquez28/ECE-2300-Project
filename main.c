@@ -81,20 +81,20 @@ int main(void){
             generate_report(&list);
             break;
 
-            /*case 7:
+            case 7:
             // Save (binary)
             save_bin(&list);
-            break;*/
+            break;
 
-            /*case 8:
+            case 8:
             // Load (binary)
             load_bin(&list);
-            break;*/
+            break;
 
-            /*case 9:
+            case 9:
             // Export CSV
             export_csv(&list);
-            break;*/
+            break;
 
             case 0:
             running = 0;
@@ -105,12 +105,12 @@ int main(void){
                 break;
         }
     }
- /*   //Ask to save before quitting
+    //Ask to save before quitting
     printf("Save bills to binary file before quitting? (1 = Yes, 0 = No)\n");
     int saveBeforeExit = read_int_in_range(0,1);
     if (saveBeforeExit){
         save_bin(&list);
-    } */
+    }
 
     clear_list(&list);
     printf("Goodbye!\n");
