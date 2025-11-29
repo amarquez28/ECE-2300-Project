@@ -404,229 +404,111 @@ void sort_bills(sBill_LL *list, int field) {
   } while(swapped);
   printf("Bills sorted.\n");
 }
-
+/*
 void generate_report(const sBill_LL *list){
-  if (!list || list->size == 0){
-    printf("No bills to report.\n");
-    return;
-  }
-  printf("\n--- Report: By Month (YYYY-MM) ---\n");
-
-  // naive fixed-size arrays for demo
-  #define MAX_GROUPS 100
-  char months[MAX_GROUPS][8];
-  int monthCount = 0;
-  int monthRecords[MAX_GROUPS] = {0};
-  float monthTotals[MAX_GROUPS] = {0.0f};
-
-  sBill *curr = list->head;
-  while (curr){
-    char key[8] = {0};
-    strncpy(key, curr->date, 7);
-
-    int idx  = -1;
-    for (int i = 0; i < monthCount; i++){
-      if (strcmp(months[i], key) == 0){
-        idx = i;
-        break;
-      }
-    }
-    if (idx == -1 && monthCount < MAX_GROUPS){
-      idx = monthCount++;
-      strncpy(months[idx], key, 7);
-      months[idx][7] = '\0';
-    }
-    if (idx != -1){
-      monthRecords[idx]++;
-      monthTotals[idx] += curr->total;
-    }
-    curr = curr->next;
-  }
-
-  printf("Month      Count   Total      Average\n");
-  printf("--------------------------------------\n");
-  for (int i = 0; i < monthCount; i++){
-    float avg = monthRecords[i] ? (monthTotals[i]/monthRecords[i]) : 0.0f;
-    printf("%-10s %-7d $%-9.2f $%.2f\n", months[i], monthRecords[i], monthTotals[i], avg);
-  }
-
-  //By Categroy
-  printf("\n--- Report: By Categroy ---\n");
-  char cats[MAX_GROUPS][MAX_NAME_LEN];
-  int catCount = 0;
-  int catRecords[MAX_GROUPS] = {0};
-  float catTotals[MAX_GROUPS] = {0.0f};
-  float catMin[MAX_GROUPS];
-  float catMax[MAX_GROUPS];
-
-  for (int i = 0; i < MAX_GROUPS; i++){
-    catMin[i] = 1e9f;
-    catMax[i] = 0.0f;
-  }
-  curr = list->head;
-  while (curr){
-    int idx = -1;
-    for (int i = 0; i < catCount; i++){
-      if (strcmp(cats[i], curr->category) == 0){
-        idx = i;
-        break;
-      }
-    }
-    if (idx == -1 && catCount < MAX_GROUPS){
-      idx = catCount++;
-      strncpy(cats[idx], curr->category, MAX_NAME_LEN - 1);
-      cats[idx][MAX_NAME_LEN - 1] = '\0';
-    }
-
-    catRecords[idx]++;
-    catTotals[idx] += curr->total;
-    if (curr->total < catMin[idx]) catMin[idx] = curr->total;
-    if (curr->total > catMax[idx]) catMax[idx] = curr->total;
-
-    curr = curr->next;
-  }
-  printf("Category            Count   Total      Min       Max       Avg\n");
-  printf("-----------------------------------------------------------------\n");
-  for (int i = 0; i < catCount; i++) {
-    float avg = catRecords[i] ? (catTotals[i] / catRecords[i]) : 0.0f;
-      printf("%-20s %-7d $%-9.2f $%-8.2f $%-8.2f $%.2f\n",
-            cats[i], catRecords[i], catTotals[i],
-            (catMin[i] == 1e9f ? 0.0f : catMin[i]),
-            catMax[i],
-            avg);
-  }
+  //code
 }
 
 void save_bill(const sBill_LL *list){
-  if (!list) return;
-
-  FILE *fp = fopen("bills.txt", "w");
-  if(!fp){
-    printf("Could not open bills.txt for writing.\n");
-    return;
-  }
-  
-  sBill *curr = list->head;
-  while (curr){
-    fpritnf(fp, "%s|%s|%.2f|%d|%s|%s|%s|%d|%s\n",
-                curr->category,
-                curr->provider,
-                curr->total,
-                curr->payment,
-                curr->paymentMethod,
-                curr->date,
-                curr->billingPeriod,
-                curr->taxRelevance,
-                curr->notes);
-        curr = curr->next;
-  }
-
-  fclose(fp);
-  printf("Bills saved to bills.txt\n");
+  //code
 }
 
 void load_bill(sBill_LL *list){
-  if (!list) return;
-
-  FILE *fp = fopen("bills.txt", "r");
-  if(!fp){
-    prtinf("No bills.txt file found.\n");
-    return;
-  }
-
-  clear_list(list);
-
-  char line[256];
-  while (fgets(line, sizeof(line), fp)){
-    sBill *bill = (sBill *)malloc(sizeof(sBill));
-    if(!bill) break;
-    memset(bill, 0, sizeof(sBill));
-
-    char *token = strtok(line, "|");
-    if (!token) { free(bill); continue; }
-    strncpy(bill->category, token, MAX_NAME_LEN - 1);
-
-    token = strtok(NULL, "|");
-    if (!token) { free(bill); continue; }
-    strncpy(bill->provider, token, MAX_NAME_LEN - 1);
-
-    token = strtok(NULL, "|");
-    if (!token) { free(bill); continue; }
-    bill->total = (float)atof(token);
-
-    token = strtok(NULL, "|");
-    if (!token) { free(bill); continue; }
-    bill->payment = (enum paymentType)atoi(token);
-
-    token = strtok(NULL, "|");
-    if (!token) { free(bill); continue; }
-    strncpy(bill->paymentMethod, token, sizeof(bill->paymentMethod) - 1);
-
-    token = strtok(NULL, "|");
-    if (!token) { free(bill); continue; }
-    strncpy(bill->date, token, DATE_LEN - 1);
-
-    token = strtok(NULL, "|");
-    if (!token) { free(bill); continue; }
-    strncpy(bill->billingPeriod, token, MAX_NAME_LEN - 1);
-
-    token = strtok(NULL, "|");
-    if (!token) { free(bill); continue; }
-    bill->taxRelevance = atoi(token);
-
-    token = strtok(NULL, "\n");
-    if (!token) token = "";
-    strncpy(bill->notes, token, MAX_NOTE_LEN - 1);
-
-    bill->next = bill->prev = NULL;
-    add_bill(list, bill);
-  }
-
-  fclose(fp);
-  printf("Bills loaded from bills.txt\n");
-
+  //code
 }
 
 void export_csv(const sBill_LL *list){
-  if (!list) return;
-
-  FILE *fp = fopen("bills.csv", "w");
-  if (!fp){
-    printf("Could not open bills.csv for writing.\n");
-    return;
-  }
-
-  fprintf(fp,
-            "Category,Provider,Total,PaymentType,PaymentMethod,Date,BillingPeriod,TaxRelevance,Notes\n");
-
-  sBill *curr = list->head;
-  while (curr){
-    fprintf(fp,
-                "\"%s\",\"%s\",%.2f,%d,\"%s\",\"%s\",\"%s\",%d,\"%s\"\n",
-                curr->category,
-                curr->provider,
-                curr->total,
-                curr->payment,
-                curr->paymentMethod,
-                curr->date,
-                curr->billingPeriod,
-                curr->taxRelevance,
-                curr->notes);
-    curr = curr->next;
-  }
-
-  fclose(fp);
-  printf("Bills exported to bills.csv\n");
-}
-/*
-void save_bin(const sBill_LL *list){
-  //code
-}
-
-void load_bin(sBill_LL *list){
   //code
 }
 */
+
+void save_bin(const sBill_LL *list){
+  if (!list) return;
+
+    const char *filename = "bills.bin";
+    FILE *file = fopen(filename, "wb");
+    if (!file) {
+      perror("Error opening file for writing");
+      return;
+    }
+
+    //Write number of bills first
+    size_t size = list->size;
+    if (fwrite(&size, sizeof(size_t), 1, file) != 1) {
+      perror("Error writing list size");
+      fclose(file);
+      return;
+    }
+
+    //Iterate and write each sBill structure
+    sBill *curr = list->head;
+    int count = 0;
+    while (curr) {
+      sBill temp_bill = *curr;
+      temp_bill.next = NULL;
+      temp_bill.prev = NULL;
+
+      if (fwrite(&temp_bill, sizeof(sBill), 1, file) != 1) {
+        perror("Error writing bill data");
+        fclose(file); 
+        return;
+      }
+      curr = curr->next;
+      count++;
+    }
+
+  fclose(file);
+  printf("Successfully saved %d bills to %s.\n", count, filename);
+}
+
+void load_bin(sBill_LL *list){
+  if (!list) return;
+
+    const char *filename = "bills.bin";
+    FILE *file = fopen(filename, "rb");
+    if (!file) {
+      perror("Error opening file for reading");
+      return;
+    }
+      // gurthovich
+    //Clear current list before loading new data
+    clear_list(list);
+
+    //Read total number of bills
+    size_t size = 0;
+    if (fread(&size, sizeof(size_t), 1, file) != 1) {
+      if (feof(file)) {
+        printf("File is empty or corrupted.\n");
+      } else {
+        perror("Error reading list size");
+      }
+      fclose(file);
+      return;
+    }
+
+    //Loop and read each sBill structure
+    int count = 0;
+    for (size_t i = 0; i < size; i++) {
+      sBill *new_bill = (sBill *)malloc(sizeof(sBill));
+      if (!new_bill) {
+        printf("Memory allocation failed while loading.\n");
+        break;
+      }
+      
+      if (fread(new_bill, sizeof(sBill), 1, file) != 1) {
+        perror("Error reading bill data");
+        free(new_bill);
+        break;
+      }
+
+      // The read data contains NULL for next/prev pointers
+      add_bill(list, new_bill);
+      count++;
+    }
+
+  fclose(file);
+  printf("Successfully loaded %d bills from %s.\n", count, filename);
+}
 
 /*Menu UI*/
 void print_menu(const sBill_LL *list){
